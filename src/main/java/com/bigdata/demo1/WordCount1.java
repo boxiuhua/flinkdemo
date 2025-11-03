@@ -28,6 +28,8 @@ public class WordCount1 {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         //指定该任务按照那种执行，自动AUTOMATIC，批BATCH，流STREAMING
         env.setRuntimeMode(RuntimeExecutionMode.STREAMING);
+        //并行度
+//        env.setParallelism(2);
         //加载数据
         DataStreamSource<String> dataStreamSource = env.fromElements("hello world bigdata", "hadoop spark hive bigdata","hello word spark");
 
