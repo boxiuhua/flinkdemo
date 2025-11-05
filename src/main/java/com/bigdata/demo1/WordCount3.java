@@ -1,11 +1,14 @@
 package com.bigdata.demo1;
 
 import org.apache.flink.api.common.RuntimeExecutionMode;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.functions.KeySelector;
-import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.connector.file.src.FileSource;
+import org.apache.flink.connector.file.src.reader.TextLineInputFormat;
+import org.apache.flink.core.fs.Path;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
@@ -13,9 +16,9 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.Collector;
 
 /**
- * 单词计数
+ * 从外部加载文件的两个方法
  */
-public class WordCount1 {
+public class WordCount3 {
 
     /**
      * 1、创建env环境
@@ -32,8 +35,15 @@ public class WordCount1 {
         //指定该任务按照那种执行，自动AUTOMATIC，批BATCH，流STREAMING
         env.setRuntimeMode(RuntimeExecutionMode.STREAMING);
         //加载数据
-        DataStreamSource<String> dataStreamSource = env.fromElements("hello world bigdata", "hadoop spark hive bigdata","hello word spark");
+        DataStreamSource<String> dataStreamSource = null;
+        if(args.length==0){
+            String file = args[0];
+            FileSource<String> fileSource = FileSource.forRecordStreamFormat(new TextLineInputFormat(),new Path(file)).build();
+            dataStreamSource = env.fromSource(fileSource, WatermarkStrategy.noWatermarks(),"fileSource");
 
+        }else{
+            dataStreamSource = env.fromElements("hello world bigdata", "hadoop spark hive bigdata","hello word spark");
+        }
         SingleOutputStreamOperator<String> fatetedMap = dataStreamSource.flatMap(new FlatMapFunction<String, String>() {
             @Override
             public void flatMap(String line, Collector<String> out) throws Exception {
