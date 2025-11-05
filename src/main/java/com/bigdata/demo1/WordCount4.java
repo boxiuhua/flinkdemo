@@ -6,6 +6,7 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.connector.file.src.FileSource;
 import org.apache.flink.connector.file.src.reader.TextLineInputFormat;
 import org.apache.flink.core.fs.Path;
@@ -16,9 +17,9 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.Collector;
 
 /**
- * 从外部加载文件的两个方法
+ * 从外部加载文件的两个方法 --input 传参
  */
-public class WordCount3 {
+public class WordCount4 {
 
     /**
      * 1、创建env环境
@@ -36,10 +37,17 @@ public class WordCount3 {
         env.setRuntimeMode(RuntimeExecutionMode.STREAMING);
         //加载数据
         DataStreamSource<String> dataStreamSource = null;
-        if(args.length==1){
-            String file = args[0];
-            FileSource<String> fileSource = FileSource.forRecordStreamFormat(new TextLineInputFormat(),new Path(file)).build();
-            dataStreamSource = env.fromSource(fileSource, WatermarkStrategy.noWatermarks(),"fileSource");
+        if(args.length>0){
+            ParameterTool parameterTool = ParameterTool.fromArgs(args);
+            if(parameterTool.has("input")){
+                String file = parameterTool.get("input");
+                System.out.println("地址："+file);
+                FileSource<String> fileSource = FileSource.forRecordStreamFormat(new TextLineInputFormat(),new Path(file)).build();
+                dataStreamSource = env.fromSource(fileSource, WatermarkStrategy.noWatermarks(),"fileSource");
+            }else {
+                System.out.println("not input paramete");
+                dataStreamSource = env.fromElements("hello world bigdata", "hadoop spark hive bigdata","hello word spark");
+            }
         }else{
             dataStreamSource = env.fromElements("hello world bigdata", "hadoop spark hive bigdata","hello word spark");
         }
