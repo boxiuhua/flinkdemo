@@ -15,7 +15,7 @@ import org.apache.flink.util.Collector;
 /**
  * socket测试
  */
-public class LearnSec1 {
+public class LearnSocket {
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
