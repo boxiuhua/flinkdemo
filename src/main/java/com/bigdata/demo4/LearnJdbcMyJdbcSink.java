@@ -9,7 +9,7 @@ import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 /**
- * @基本功能: 数据往mysql插入数据
+ * @基本功能: 数据往mysql插入数据-自定义jdbcSink
  * @program: flinkdemo
  * @author: 华哥
  * @create: 2025-11-13 13:40:44
