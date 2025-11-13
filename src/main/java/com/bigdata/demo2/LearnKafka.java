@@ -19,7 +19,7 @@ public class LearnKafka {
 
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        KafkaSource<String> kafkaSource = KafkaSource.<String>builder().setBootstrapServers("localhost:9092").setTopics("flink")
+        KafkaSource<String> kafkaSource = KafkaSource.<String>builder().setBootstrapServers("192.168.8.206:9092").setTopics("flink")
                 .setGroupId("flink-kafka-test")
                 .setStartingOffsets(OffsetsInitializer.latest())
                 .setValueOnlyDeserializer(new SimpleStringSchema())
