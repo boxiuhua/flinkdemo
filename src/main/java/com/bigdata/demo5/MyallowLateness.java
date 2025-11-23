@@ -26,10 +26,11 @@ public class MyallowLateness {
     public static void main(String[] args) throws Exception {
         //1. env-准备环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-//        env.setParallelism(1);
+        env.setParallelism(1);
         DataStreamSource<OrderInfo> orderInfoDataStreamSource = env.addSource(new MyOrderSourceDTO());
 
-        OutputTag<OrderInfo> sideOutput = new OutputTag<>("side output"){};
+        OutputTag<OrderInfo> sideOutput = new OutputTag<>("side output") {
+        };
 
         SingleOutputStreamOperator<String> streamOperator = orderInfoDataStreamSource
                 .assignTimestampsAndWatermarks(WatermarkStrategy
@@ -44,7 +45,7 @@ public class MyallowLateness {
                 .keyBy(OrderInfo::getUid)
                 .window(TumblingEventTimeWindows.of(Time.seconds(5)))
                 .allowedLateness(Time.seconds(5))
-                .sideOutputLateData(sideOutput)
+                .sideOutputLateData(sideOutput)//侧道输出流捕捉严重迟到数据
                 .apply(new WindowFunction<OrderInfo, String, Integer, TimeWindow>() {
                     @Override
                     public void apply(Integer integer, TimeWindow window, Iterable<OrderInfo> input, Collector<String> out) throws Exception {
@@ -56,12 +57,11 @@ public class MyallowLateness {
                         for (OrderInfo orderInfo : input) {
                             sumMoney += orderInfo.getMoney();
                         }
-                        out.collect("开始时间："+startStr+"结束时间："+endStr+"，用户id="+integer+",订单总额："+sumMoney);
+                        out.collect("开始时间：" + startStr + "结束时间：" + endStr + "，用户id=" + integer + ",订单总额：" + sumMoney);
                     }
                 });
         streamOperator.print("正常与迟到数据>>>>");
         streamOperator.getSideOutput(sideOutput).print("严重迟到数据>>>");
-
 
 
         env.execute();
