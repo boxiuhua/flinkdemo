@@ -15,7 +15,7 @@ public class MyOrderSourceDTO implements SourceFunction<OrderInfo> {
             orderInfo.setOrderId(UUID.randomUUID().toString().replace("-",""));
             orderInfo.setUid(random.nextInt(3));
             orderInfo.setMoney(random.nextInt(101));
-            orderInfo.setTimeStamp(System.currentTimeMillis());
+            orderInfo.setTimeStamp(System.currentTimeMillis()-10*random.nextInt(5)*1000);
             ctx.collect(orderInfo);
             Thread.sleep(1000);// 间隔1s
         }
