@@ -32,7 +32,7 @@ public class MyFlinkStaticProctime {
         tEnv.executeSql("CREATE TABLE table1 (\n" +
                 "  `username` string,\n" +
                 "  `price` int,\n" +
-                "  `event_time` as PROCTIME()\n" +
+                "  `event_time` as PROCTIME()\n" +   //使用系统时间
                 ") WITH (\n" +
                 "  'connector' = 'kafka',\n" +
                 "  'topic' = 'topic1',\n" +
